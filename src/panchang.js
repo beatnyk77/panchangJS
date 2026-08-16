@@ -403,8 +403,14 @@ knv = Math.floor(((jd - 2415020) / 365.25) * 12.3685);
 for (itit = n1; itit < (n1 + 2); ++itit) {
 aspect = len * itit; // sun n moon in the early tithi
 flag = 0;
-if (aspect == 0) {jdt = novolun(jd, knv); flag = 1;}
-if (aspect == 360) {jdt = novolun(jd, (knv+1)); flag = 1;}
+      if (aspect == 0 || aspect == 360) {
+         // choose the closer new-moon candidate (knv or knv+1)
+         var jdt0 = novolun(jd, knv);
+         var jdt1 = novolun(jd, knv + 1);
+         if (Math.abs(jdt0 - jd) <= Math.abs(jdt1 - jd)) jdt = jdt0;
+         else jdt = jdt1;
+         flag = 1;
+      }
 while (flag < 1) {
 Lsun0 = sun(jdt);
 Lmoon0 = moon(jdt);

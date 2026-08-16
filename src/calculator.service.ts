@@ -528,8 +528,14 @@ export class CalculatorService {
         for (var itit = n1; itit < (n1 + 2); ++itit) {
             var aspect = len * itit; // sun n moon in the early tithi
             flag = 0;
-            if (aspect == 0) { jdt = this.novolun(jd, knv); flag = 1; }
-            if (aspect == 360) { jdt = this.novolun(jd, (knv + 1)); flag = 1; }
+            if (aspect == 0 || aspect == 360) {
+                // choose the closer new-moon candidate (knv or knv+1)
+                var jdt0 = this.novolun(jd, knv);
+                var jdt1 = this.novolun(jd, knv + 1);
+                if (Math.abs(jdt0 - jd) <= Math.abs(jdt1 - jd)) jdt = jdt0;
+                else jdt = jdt1;
+                flag = 1;
+            }
             while (flag < 1) {
                 var Lsun0 = this.sun(jdt);
                 var Lmoon0 = this.moon(jdt);
