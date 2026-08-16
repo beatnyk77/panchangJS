@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>panchang tithi tests</title>
+  <script src="../src/panchang.js"></script>
+  <style>body{font-family:Segoe UI,Arial;margin:20px} .pass{color:green}.fail{color:red}</style>
+</head>
+<body>
+  <h2>panchang tithi tests</h2>
+  <pre id="out"></pre>
+  <script>
+    function log(msg, cls) {
+      var p = document.getElementById('out');
+      var line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.textContent = msg;
+      p.appendChild(line);
+      console.log(msg);
+    }
+
+    function runTest(dateStr) {
+      var d = new Date(dateStr);
+      panchang.calculate(d);
+      var s = panchang.Tithi.start;
+      var e = panchang.Tithi.end;
+      if (!(s instanceof Date) || !(e instanceof Date)) throw new Error('Tithi start/end not Date objects');
+      var diffDays = (e - s) / (1000 * 60 * 60 * 24);
+      if (!(diffDays > 0 && diffDays < 3)) {
+        throw new Error('Unexpected tithi length for ' + dateStr + ': ' + diffDays + ' days (start=' + s.toISOString() + ', end=' + e.toISOString() + ')');
+      }
+      return diffDays;
+    }
+
+    (function(){
+      try {
+        var d1 = '2020-04-23T00:00:00Z';
+        var len1 = runTest(d1);
+        log('PASS ' + d1 + ' tithi length (days): ' + len1.toFixed(3), 'pass');
+
+        var d2 = '2020-05-22T00:00:00Z';
+        var len2 = runTest(d2);
+        log('PASS ' + d2 + ' tithi length (days): ' + len2.toFixed(3), 'pass');
+
+        // current date/time test
+        try {
+          var now = new Date();
+          panchang.calculate(now);
+          var sNow = panchang.Tithi.start;
+          var eNow = panchang.Tithi.end;
+          if (!(sNow instanceof Date) || !(eNow instanceof Date)) throw new Error('Tithi start/end not Date objects for current date');
+          if (!(now >= sNow && now < eNow)) throw new Error('Current time not within tithi interval for ' + now.toISOString());
+          log('PASS current ' + now.toISOString() + ' tithi: ' + panchang.Tithi.name + ' start=' + sNow.toISOString() + ' end=' + eNow.toISOString(), 'pass');
+        } catch (err) {
+          log('CURRENT TEST FAILED: ' + err.message, 'fail');
+          throw err;
+        }
+
+        log('All tests passed', 'pass');
+      } catch (err) {
+        log('TEST FAILED: ' + err.message, 'fail');
+        console.error(err);
+      }
+    })();
+  </script>
+</body>
+</html>

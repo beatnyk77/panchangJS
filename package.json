@@ -1,0 +1,11 @@
+{
+  "name": "panchangjs",
+  "version": "0.2.1",
+  "description": "PanchangJS with tithi fix and tests",
+  "scripts": {
+    "test": "node unitTest/test_tithi.js",
+    "browser-test": "echo Open unitTest/test_tithi.html in a browser to run tests"
+  },
+  "author": "",
+  "license": "MIT"
+}
